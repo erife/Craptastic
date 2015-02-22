@@ -111,14 +111,82 @@ class TestRollPoint(unittest.TestCase):
         value = self.table.shoot()
         self.assertEqual(value, 4)
         self.assertTrue(self.table.is_on())
+
+
+    def test_roll_invalid_point_table_off(self):
+        #test roll invalid point with table off
+        self.assertFalse(self.table.is_on())
+        self.table.roll_dice = lambda: 12
+        value = self.table.shoot()
+        self.assertEqual(value, None)
+        self.assertFalse(self.table.is_on())
+        
+    def test_roll_valid_point_table_on(self):
+        #test roll with non-pass point  and non-craps with table on and point set
+        self.table.set_point(9)
+        self.assertTrue(self.table.is_on())
+        self.table.roll_dice = lambda: 6
+        value = self.table.shoot()
+        self.assertEqual(value, 9)
+        self.assertTrue(self.table.is_on())
+
+    def test_roll_craps_table_on(self):
+        #test roll craps with table on and point set
+        self.table.set_point(9)
+        self.assertTrue(self.table.is_on())
+        self.table.roll_dice = lambda: 7
+        value = self.table.shoot()
+        self.assertEqual(value, None)
+        self.assertFalse(self.table.is_on())
+
+
+    def test_roll_pass_point_table_on(self):
+        #test roll pass with table on and point set
+        self.table.set_point(9)
+        self.assertTrue(self.table.is_on())
+        self.table.roll_dice = lambda: 9
+        value = self.table.shoot()
+        self.assertEqual(value, None)
+        self.assertFalse(self.table.is_on())
+
+
+class TestPlaceBet(unittest.TestCase):
+    
+    def setUp(self):
+        self.table = Table()
+
+    def test_place_pass_bet(self):
+        self.table.place_bet({'pass_line': 10})
+        self.table.place_bet({'six': 20})
+        value = self.table.list_all_bets()
+        self.assertEqual(value, {'pass_line': 10, 'six': 20})
+        
+    def test_payout_pass_bet_10(self):
+        self.table.place_bet({'pass_line': 10})
+        self.table.set_point(9)
+        self.assertTrue(self.table.is_on)
+        self.table.roll_dice = lambda: 9
+        value = self.table.payout(9)
+        self.assertEqual(value, 20)
+
+    def  test_payout_pass_bet_20(self):
+        self.table.place_bet({'pass_line': 20})
+        self.table.set_point(9)
+        self.assertTrue(self.table.is_on)
+        self.table.roll_dice = lambda: 9
+        value = self.table.payout(9)
+        self.assertEqual(value, 40)
+        
+    def  test_payout_two_bets(self):
+        self.table.place_bet({'pass_line': 20})
+        self.table.place_bet({'non-point': 10})
+        self.table.set_point(9)
+        self.assertTrue(self.table.is_on)
+        self.table.roll_dice = lambda: 9
+        value = self.table.payout(9)
+        self.assertEqual(value, 40)
+        
         
         
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestTableIsOn)
-    unittest.TextTestRunner(verbosity = 2).run(suite)
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestSetPoint)
-    unittest.TextTestRunner(verbosity = 2).run(suite)
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestRoll)
-    unittest.TextTestRunner(verbosity = 2).run(suite)
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestRollPoint)
-    unittest.TextTestRunner(verbosity = 2).run(suite)
+    unittest.main(verbosity = 2)

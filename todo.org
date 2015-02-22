@@ -1,7 +1,12 @@
-Set Point
-Place Bet
-Clear table
-Crap Out
-Make Point
-Calculate winnings
-Player Object with bank
+* DONE Set Point
+* DONE Clear table
+* DONE Crap Out
+* DONE Make Point 
+* DONE Place Bet
+* Pay Bet
+* Clear Bet
+* Increase Bet
+* Table Off Non Point Rolls 
+
+* Calculate winnings
+* Player Object with bank
