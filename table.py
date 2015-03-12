@@ -4,17 +4,29 @@ class Table:
 
     def __init__(self):
         self.point = None
+        self.is_on = False
         self.all_bets = {}
+        self.open_bets = ["pass_line"]
         self.payouts = {'pass_line': 2, 'non-point': 1.5}
+        self.bank = 100
 
-        
+    def status(self):
+        status = {}
+        status['is_on']  = self.is_on
+        status['point'] = self.point
+        status['placed_bets'] = self.all_bets
+        status['open_bets'] = self.open_bets
+        status['bank'] = self.bank
+        return status
+       
     def set_point(self, point=None):
-        if(point in [4, 5, 6, 8, 9, 10, None]):
-            self.point = point
+        self.point = point
+        self.set_is_on()
         return self.point
 
-    def is_on(self):
-        return self.point != None
+    def set_is_on(self):
+        self.is_on= self.point != None
+        return self.is_on
 
     def roll_dice(self):
         die1 = random.randint(1,6)
@@ -24,20 +36,58 @@ class Table:
 
     def shoot(self):
         dice_roll = self.roll_dice()
-        if(not self.is_on()):
-            point = self.set_point(dice_roll)
-        elif(self.is_craps(dice_roll) or self.point == dice_roll):
+        point = self.eval_roll(dice_roll)
+        return point
+
+    def eval_roll(self, dice_roll):
+        if(not self.is_on):
+            if(dice_roll in [4, 5, 6, 8, 9, 10]):
+                point = self.set_point(dice_roll)
+            else:
+                point = None
+                if(dice_roll in [2,3,12]):
+                    self.is_craps()
+        elif(dice_roll in [7,11] or self.point == dice_roll):
+            self.point = None
             point = self.set_point()
         else:
             point = self.point
         return point
+                
+    def is_craps(self):
+        self.clear_bets()
+        return
 
-    def is_craps(self, dice):
-        return dice in [7, 11]
-
+    def reset_open_bets(self):
+        self.open_bets = ["pass_line"]
+    
     def place_bet(self, bet):
         self.all_bets = dict(list(self.all_bets.items()) + list(bet.items()))
+        self.change_bank(self.total_bet_values(bet), "minus")
+        self.update_open_bets(bet)
 
+    def update_open_bets(self, bet):
+        for key, value in bet.items():
+            self.open_bets.remove(key)
+
+    def clear_bets(self):
+        self.all_bets = {}
+        self.reset_open_bets()
+
+    def total_bet_values(self, bet):
+        total_value = 0
+        for key, value in bet.items():
+            total_value += value
+        return value
+    
+    def change_bank(self, bet_value, sign):
+        if sign == 'add':
+            self.bank += bet_value
+        elif sign == 'minus':
+            self.bank -= bet_value
+        else:
+            raise AttributeError("Invalid Sign: %s" % sign)
+        
     def list_all_bets(self):
         return self.all_bets
 
