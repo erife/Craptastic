@@ -7,7 +7,7 @@ class Table:
         self.is_on = False
         self.all_bets = {}
         self.open_bets = ["pass_line"]
-        self.payouts = {'pass_line': 2, 'non-point': 1.5}
+        self.payouts = {'pass_line': 2, 'non_point': 1.5}
         self.bank = 100
 
     def status(self):
@@ -35,18 +35,19 @@ class Table:
         return dice_roll
 
     def shoot(self):
-        dice_roll = self.roll_dice()
-        point = self.eval_roll(dice_roll)
-        return point
+        self.eval_roll(self.roll_dice())
 
     def eval_roll(self, dice_roll):
         if(not self.is_on):
             if(dice_roll in [4, 5, 6, 8, 9, 10]):
                 point = self.set_point(dice_roll)
+                self.open_point_bets()
             else:
                 point = None
                 if(dice_roll in [2,3,12]):
                     self.is_craps()
+                else:
+                    self.pay_pass()
         elif(dice_roll in [7,11] or self.point == dice_roll):
             self.point = None
             point = self.set_point()
@@ -60,7 +61,10 @@ class Table:
 
     def reset_open_bets(self):
         self.open_bets = ["pass_line"]
-    
+
+    def open_point_bets(self):
+        self.open_bets.append("non_point")
+
     def place_bet(self, bet):
         self.all_bets = dict(list(self.all_bets.items()) + list(bet.items()))
         self.change_bank(self.total_bet_values(bet), "minus")
@@ -98,13 +102,14 @@ class Table:
             payouts += self.payouts[key]*value
         return payouts
 
+    def pay_pass(self):
+        has_pass_line_bet = "pass_line" in self.all_bets.keys()
+        win_amount = self.all_bets["pass_line"] if has_pass_line_bet else 0
+        self.change_bank(win_amount, 'add')
+
     def filter_winning_bets(self, dice_roll):
-        print(dice_roll)
-        print(self.point)
         if(dice_roll == self.point):
             winner = 'pass_line'
-        elif(not self.is_craps(dice_roll)):
-            winner = 'point'
         else:
             winner = []
         winning_bets = {}
