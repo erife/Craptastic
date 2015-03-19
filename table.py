@@ -7,7 +7,7 @@ class Table:
         self.is_on = False
         self.all_bets = {}
         self.open_bets = ["pass_line"]
-        self.payouts = {'pass_line': 2, 'non_point': 1.5}
+        self.payouts = {'pass_line': 1, 'non_point': .75}
         self.bank = 100
 
     def status(self):
@@ -39,24 +39,44 @@ class Table:
 
     def eval_roll(self, dice_roll):
         if(not self.is_on):
-            if(dice_roll in [4, 5, 6, 8, 9, 10]):
-                point = self.set_point(dice_roll)
-                self.open_point_bets()
-            else:
-                point = None
-                if(dice_roll in [2,3,12]):
-                    self.is_craps()
-                else:
-                    self.pay_pass()
-        elif(dice_roll in [7,11] or self.point == dice_roll):
-            self.point = None
-            point = self.set_point()
+            self.coming_out(dice_roll)
         else:
-            point = self.point
-        return point
-                
-    def is_craps(self):
+            is_craps = self.check_craps(dice_roll)
+            is_point = self.check_point(dice_roll)
+            if(is_point):
+                self.pay_bet("pass_line")
+                self.set_point()
+            elif(is_craps):
+                return
+            else:
+                self.pay_bet("non_point")
+                return
+
+    def coming_out(self, dice_roll):
+        if(dice_roll in [4, 5, 6, 8, 9, 10]):
+            self.set_point(dice_roll)
+            self.open_point_bets()
+        else:
+            if(dice_roll in [2,3,12]):
+                self.on_craps()
+            else:
+                self.pay_bet("pass_line")
+
+
+    def check_craps(self, dice_roll):
+        if(dice_roll in [7,11]):
+            self.on_craps()
+            return True
+        return False
+
+    def check_point(self, dice_roll):
+        if(dice_roll == self.point):
+            return True
+        return False
+    
+    def on_craps(self):
         self.clear_bets()
+        self.set_point()
         return
 
     def reset_open_bets(self):
@@ -95,25 +115,36 @@ class Table:
     def list_all_bets(self):
         return self.all_bets
 
-    def payout(self, dice_roll):
-        payouts = 0
-        winning_bets = self.filter_winning_bets(dice_roll)
-        for key, value in winning_bets.items():
-            payouts += self.payouts[key]*value
-        return payouts
 
-    def pay_pass(self):
-        has_pass_line_bet = "pass_line" in self.all_bets.keys()
-        win_amount = self.all_bets["pass_line"] if has_pass_line_bet else 0
+    def pay_bet(self, bet):
+        has_bet = bet in self.all_bets.keys()
+        bet_amount = self.all_bets[bet] if has_bet else 0
+        multiplier = self.payouts[bet]
+        win_amount = bet_amount*multiplier
         self.change_bank(win_amount, 'add')
 
-    def filter_winning_bets(self, dice_roll):
-        if(dice_roll == self.point):
-            winner = 'pass_line'
-        else:
-            winner = []
-        winning_bets = {}
-        for key, value in self.all_bets.items():
-            if(winner == key):
-                winning_bets[key] = value
-        return winning_bets
+
+        
+
+
+
+
+        # def payout(self, dice_roll):
+    #     payouts = 0
+    #     winning_bets = self.filter_winning_bets(dice_roll)
+    #     for key, value in winning_bets.items():
+    #         payouts += self.payouts[key]*value
+    #     return payouts
+
+
+        
+    # def filter_winning_bets(self, dice_roll):
+    #     if(dice_roll == self.point):
+    #         winner = 'pass_line'
+    #     else:
+    #         winner = []
+    #     winning_bets = {}
+    #     for key, value in self.all_bets.items():
+    #         if(winner == key):
+    #             winning_bets[key] = value
+    #     return winning_bets

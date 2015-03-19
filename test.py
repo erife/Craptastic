@@ -1,5 +1,9 @@
 import unittest
 from table import Table
+def merge_dicts(a, b):
+    c = a.copy()
+    c.update(b)
+    return c
 
 class TestTableIsOn(unittest.TestCase):
 
@@ -25,67 +29,68 @@ class TestSetPoint(unittest.TestCase):
 
     def test_set_point_four(self):
         #point is valid if value is 4
-        value = self.table.eval_roll(4)
+        self.table.eval_roll(4)
+        value = self.table.point
         self.assertEqual(value, 4)
 
     def test_set_point_five(self):
         #point is valid if value is 5
-        value = self.table.eval_roll(5)
+        self.table.eval_roll(5)
+        value = self.table.point
         self.assertEqual(value, 5)
 
     def test_set_point_six(self):
         #point is valid if value is 6
-        value = self.table.eval_roll(6)
+        self.table.eval_roll(6)
+        value = self.table.point
         self.assertEqual(value, 6)
 
     def test_set_point_eight(self):
         #point is valid if value is 8
-        value = self.table.eval_roll(8)
+        self.table.eval_roll(8)
+        value = self.table.point
         self.assertEqual(value, 8)
 
     def test_set_point_nine(self):
         #point is valid if value is 9
-        value = self.table.eval_roll(9)
+        self.table.eval_roll(9)
+        value = self.table.point
         self.assertEqual(value, 9)
 
     def test_set_point_ten(self):
         #point is valid if value is 10
-        value = self.table.eval_roll(10)
+        self.table.eval_roll(10)
+        value = self.table.point
         self.assertEqual(value, 10)
 
     def test_set_point_two(self):
         #point is not valid if value is 2
-        value = self.table.eval_roll(2)
+        self.table.eval_roll(11)
+        value = self.table.point
         self.assertEqual(value, None)
 
     def test_set_point_three(self):
         #point is not valid if value is 3
-        value = self.table.eval_roll(3)
-        self.assertEqual(value, None)
-
-    def test_set_point_two(self):
-        #point is not valid if value is 2
-        value = self.table.eval_roll(2)
-        self.assertEqual(value, None)
-
-    def test_set_point_three(self):
-        #point is not valid if value is 3
-        value = self.table.eval_roll(3)
+        self.table.eval_roll(3)
+        value = self.table.point
         self.assertEqual(value, None)
 
     def test_set_point_seven(self):
         #point is not valid if value is 7
-        value = self.table.eval_roll(7)
+        self.table.eval_roll(7)
+        value = self.table.point
         self.assertEqual(value, None)
 
     def test_set_point_eleven(self):
         #point is not valid if value is 11
-        value = self.table.eval_roll(11)
+        self.table.eval_roll(11)
+        value = self.table.point
         self.assertEqual(value, None)
 
     def test_set_point_twelve(self):
         #point is not valid if value is 12
-        value = self.table.eval_roll(12)
+        self.table.eval_roll(12)
+        value = self.table.point
         self.assertEqual(value, None)
 
 class TestRoll(unittest.TestCase):
@@ -155,31 +160,31 @@ class TestRollPoint(unittest.TestCase):
         self.assertFalse(self.table.is_on)
 
 
-class TestPlaceBet(unittest.TestCase):
+# class TestPlaceBet(unittest.TestCase):
     
-    def setUp(self):
-        self.table = Table()
+#     def setUp(self):
+#         self.table = Table()
 
-    def test_place_pass_bet(self):
-        self.table.place_bet({'pass_line': 10})
-        value = self.table.list_all_bets()
-        self.assertEqual(value, {'pass_line': 10})
+#     def test_place_pass_bet(self):
+#         self.table.place_bet({'pass_line': 10})
+#         value = self.table.list_all_bets()
+#         self.assertEqual(value, {'pass_line': 10})
         
-    def test_payout_pass_bet_10(self):
-        self.table.place_bet({'pass_line': 10})
-        self.table.set_point(9)
-        self.assertTrue(self.table.is_on)
-        self.table.roll_dice = lambda: 9
-        value = self.table.payout(9)
-        self.assertEqual(value, 20)
+#     def test_payout_pass_bet_10(self):
+#         self.table.place_bet({'pass_line': 10})
+#         self.table.set_point(9)
+#         self.assertTrue(self.table.is_on)
+#         self.table.roll_dice = lambda: 9
+#         value = self.table.payout(9)
+#         self.assertEqual(value, 20)
 
-    def  test_payout_pass_bet_20(self):
-        self.table.place_bet({'pass_line': 20})
-        self.table.set_point(9)
-        self.assertTrue(self.table.is_on)
-        self.table.roll_dice = lambda: 9
-        value = self.table.payout(9)
-        self.assertEqual(value, 40)
+#     def  test_payout_pass_bet_20(self):
+#         self.table.place_bet({'pass_line': 20})
+#         self.table.set_point(9)
+#         self.assertTrue(self.table.is_on)
+#         self.table.roll_dice = lambda: 9
+#         value = self.table.payout(9)
+#         self.assertEqual(value, 40)
         
     # def  test_payout_two_bets(self):
     #     self.table.place_bet({'pass_line': 20})
@@ -207,12 +212,11 @@ class TestStatus(unittest.TestCase):
         #Game Start - Table Off, No Point, No Bets, Initial Bank, Pass Line Available
         value = {}
         value = self.table.status()
-        self.default_status.update({
+        self.assertEqual(value, merge_dicts(self.default_status, {
                 "placed_bets": {},
                 "open_bets": ["pass_line"],
                 "bank": 100                
-                })
-        self.assertEqual(value, self.default_status)
+                }))
 
         
     def test_initial_status_report_first_bet(self):
@@ -267,15 +271,85 @@ class TestStatus(unittest.TestCase):
         self.table.place_bet({'pass_line': 10})
         self.table.roll_dice = lambda: 6
         self.table.shoot()
-        self.table.place_bet({'non_point': 15})
+        self.table.place_bet({'non_point': 20})
         value = self.table.status()
         self.default_status.update({
                 "is_on": True,
                 "point": 6,
-                "placed_bets": {"pass_line": 10, "non_point": 15},
-                "bank": 75
+                "placed_bets": {"pass_line": 10, "non_point": 20},
+                "bank": 70
                 })
         self.assertEqual(value, self.default_status)
+
+    def test_initial_status_report_second_roll_craps(self):
+        #Bet Non_Point - Table On, Point = Roll, Pass Bet - 10, Bank - 90
+        value = {}
+        self.table.place_bet({'pass_line': 10})
+        self.table.roll_dice = lambda: 6
+        self.table.shoot()
+        self.table.place_bet({'non_point': 20})
+        self.table.roll_dice = lambda: 7
+        self.table.shoot()
+        value = self.table.status()
+        self.default_status.update({
+                "placed_bets": {},
+                "open_bets": ["pass_line"],
+                "bank": 70
+                })
+        self.assertEqual(value, self.default_status)
+
+    def test_initial_status_report_second_roll_point(self):
+        #Bet Non_Point - Table On, Point = Roll, Pass Bet - 10, Bank - 90
+        value = {}
+        self.table.place_bet({'pass_line': 10})
+        self.table.roll_dice = lambda: 6
+        self.table.shoot()
+        self.table.place_bet({'non_point': 20})
+        self.table.roll_dice = lambda: 6
+        self.table.shoot()
+        value = self.table.status()
+        self.default_status.update({
+                "placed_bets": {"pass_line": 10, "non_point": 20},
+                "bank": 80
+                })
+        self.assertEqual(value, self.default_status)
+
+    def test_initial_status_report_second_roll_point_no_pass_bet(self):
+        #Bet Non_Point - Table On, Point = Roll, Pass Bet - 10, Bank - 90
+        value = {}
+        self.table.roll_dice = lambda: 6
+        self.table.shoot()
+        self.table.place_bet({'non_point': 20})
+        self.table.roll_dice = lambda: 6
+        self.table.shoot()
+        value = self.table.status()
+        self.default_status.update({
+                "placed_bets": {"non_point": 20},
+                "open_bets": ["pass_line"],
+                "bank": 80
+                })
+        self.assertEqual(value, self.default_status)
+
+
+    def test_initial_status_report_second_roll_non_point(self):
+        #Bet Non_Point - Table On, Point = Roll, Pass Bet - 10, Bank - 90
+        value = {}
+        self.table.place_bet({'pass_line': 10})
+        self.table.roll_dice = lambda: 6
+        self.table.shoot()
+        self.table.place_bet({'non_point': 20})
+        self.table.roll_dice = lambda: 9
+        self.table.shoot()
+        value = self.table.status()
+        self.default_status.update({
+                "is_on": True,
+                "point": 6,
+                "placed_bets": {"pass_line": 10, "non_point": 20},
+                "bank": 85
+                })
+        self.assertEqual(value, self.default_status)
+        
+
         
 if __name__ == '__main__':
     unittest.main(verbosity = 2)
