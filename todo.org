@@ -3,10 +3,14 @@
 * DONE Crap Out
 * DONE Make Point 
 * DONE Place Bet
-* Pay Bet
-* Clear Bet
+* DONE Pay Bet
+* DONE Clear Bet
+* DONE Table Off Non Point Rolls 
+* DONE Calculate winnings
+* DONE Interface for actions
+* TODO Save State and Load from State
 * Increase Bet
-* Table Off Non Point Rolls 
-
-* Calculate winnings
 * Player Object with bank
+* Create controllers to respond to web requests
+* If a Player tries to bet more than available in their bank, it responds with an error and does not place the bet
+

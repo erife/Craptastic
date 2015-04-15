@@ -1,14 +1,31 @@
 import random
+import sqlite3
+conn = sqlite3.connect('state.db')
+c = conn.cursor()
 
 class Table:
 
-    def __init__(self):
+    DEFAULT_BANK = 100
+    
+
+    def __init__(self, id):
+        self.storage()
         self.point = None
         self.is_on = False
         self.all_bets = {}
         self.open_bets = ["pass_line"]
         self.payouts = {'pass_line': 1, 'non_point': .75}
-        self.bank = 100
+        self.bank = self.load_bank(id)
+
+    def load_bank(self, id):
+        row = c.execute('SELECT bank FROM status where id = ?', (id,)).fetchone()
+        if row:
+            return row[0]
+        return self.DEFAULT_BANK
+        
+    def storage(self):
+        c.execute("CREATE TABLE IF NOT EXISTS status (id varchar(32) primary key, bank int)")
+        conn.commit()
 
     def status(self):
         status = {}
@@ -86,10 +103,17 @@ class Table:
         self.open_bets.append("non_point")
 
     def place_bet(self, bet):
-        self.all_bets = dict(list(self.all_bets.items()) + list(bet.items()))
-        self.change_bank(self.total_bet_values(bet), "minus")
-        self.update_open_bets(bet)
+        bet_value = self.total_bet_values(bet)
+        if(self.validate_bet(bet_value)):
+            self.all_bets = dict(list(self.all_bets.items()) + list(bet.items()))
+            self.change_bank(self.total_bet_values(bet), "minus")
+            self.update_open_bets(bet)
+            return True
+        return False
 
+    def validate_bet(self, bet):
+        return bet <= self.bank
+    
     def update_open_bets(self, bet):
         for key, value in bet.items():
             self.open_bets.remove(key)
@@ -111,6 +135,8 @@ class Table:
             self.bank -= bet_value
         else:
             raise AttributeError("Invalid Sign: %s" % sign)
+        c.execute("INSERT OR REPLACE INTO status(id, bank) VALUES(?, ?)", ('saved_table', self.bank))
+        conn.commit()
         
     def list_all_bets(self):
         return self.all_bets
