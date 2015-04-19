@@ -103,7 +103,18 @@ class TableTest(unittest.TestCase):
                 table.place_bet(bet, 1)
                 
  
+    def test_clear_bets(self):
+        
+        expected_result = self.INITIAL_STATUS
+        
+        initial_status = copy(self.INITIAL_STATUS)
+        initial_status['placed_bets'] = {'pass': 1}
+        table = Table(initial_status)
  
+        table.clear_bets()
+        
+        result = table.status()
+        self.assertEqual(expected_result, result)
 
         
         
