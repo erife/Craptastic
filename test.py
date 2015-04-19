@@ -10,10 +10,12 @@ class TableTest(unittest.TestCase):
             'available_bets': ['pass'],
             'placed_bets': {}
         }
+    def setUp(self):
+        self.initial_status = copy(self.INITIAL_STATUS)
     
     def test_initial_status(self):
         table = Table()
-        expected_result = self.INITIAL_STATUS
+        expected_result = self.initial_status
         
         result = table.status()
         self.assertEqual(expected_result, result)
@@ -37,7 +39,7 @@ class TableTest(unittest.TestCase):
     def test_set_status_on(self):
         table = Table()
         
-        expected_result = copy(self.INITIAL_STATUS)
+        expected_result = self.initial_status
         expected_result['is_on'] = True
         table.set_on()
         
@@ -47,7 +49,7 @@ class TableTest(unittest.TestCase):
 
  
     def test_set_status_off(self):
-        initial_status = copy(self.INITIAL_STATUS)
+        initial_status = self.initial_status
         initial_status['is_on'] = True
         table = Table(initial_status)
  
@@ -60,7 +62,7 @@ class TableTest(unittest.TestCase):
     def test_increment_bank(self):
         table = Table()
         
-        expected_result = copy(self.INITIAL_STATUS)
+        expected_result = self.initial_status
         expected_result['bank'] = 101
  
         table.increment_bank(1)
@@ -71,7 +73,7 @@ class TableTest(unittest.TestCase):
     def test_decrement_bank(self):
         table = Table()
         
-        expected_result = copy(self.INITIAL_STATUS)
+        expected_result = self.initial_status
         expected_result['bank'] = 99
  
         table.decrement_bank(1)
@@ -83,7 +85,7 @@ class TableTest(unittest.TestCase):
     def test_place_bet(self):
         table = Table()
         
-        expected_result = copy(self.INITIAL_STATUS)
+        expected_result = self.initial_status
         expected_result['placed_bets'] = {'pass': 1}
  
         table.place_bet('pass', 1)
@@ -107,14 +109,28 @@ class TableTest(unittest.TestCase):
         
         expected_result = self.INITIAL_STATUS
         
-        initial_status = copy(self.INITIAL_STATUS)
-        initial_status['placed_bets'] = {'pass': 1}
-        table = Table(initial_status)
+        self.initial_status['placed_bets'] = {'pass': 1}
+        table = Table(self.initial_status)
  
         table.clear_bets()
         
         result = table.status()
         self.assertEqual(expected_result, result)
+
+    def test_payout_bet(self):
+        bet_amount = 1
+        initial_status = copy(self.INITIAL_STATUS)
+        initial_status['placed_bets'] = {'pass': bet_amount}
+        table = Table(initial_status)
+        
+        
+        winning_bets = ['pass']
+        result = table.pay_bets(winning_bets)
+        
+        expected_result = bet_amount
+        
+        self.assertEqual(expected_result, result)
+
 
         
         
