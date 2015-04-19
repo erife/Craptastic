@@ -1,0 +1,12 @@
+* Table
+** Pass Line
+*** Bet Areas
+** Table On Numbers
+*** Available Bets
+*** Bet Areas
+*** On Marker
+* Player Interface
+** Bank
+** Placed Bets
+* Dice Roll
+** Display Roll
