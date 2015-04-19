@@ -38,3 +38,13 @@ class Table():
 
     def clear_bets(self):
         self.report_status['placed_bets'] = {}
+
+    def pay_bets(self, winning_bets):
+        win_amount = 0
+        for bet in winning_bets:
+            placed_bet = self.report_status['placed_bets'][bet]
+            if bet == '6':
+                win_amount += placed_bet * (7/6)
+            else:
+                win_amount += placed_bet
+        return win_amount
