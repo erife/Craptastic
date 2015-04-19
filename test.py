@@ -149,6 +149,23 @@ class TableTest(unittest.TestCase):
         
         self.assertEqual(expected_result, result)
 
+    def test_payout_double_bets(self):
+        bet_amount = 12
+        initial_status = copy(self.INITIAL_STATUS)
+        initial_status['placed_bets'] = {'pass': bet_amount, '6': bet_amount}
+        table = Table(initial_status)
+        
+        
+        winning_bets = ['pass', '6']
+        result = table.pay_bets(winning_bets)
+        
+        payout_for_6 = 14
+        payout_for_pass = 12
+        
+        expected_result = payout_for_6 + payout_for_pass
+        
+        self.assertEqual(expected_result, result)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
