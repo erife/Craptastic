@@ -36,3 +36,5 @@ class Table():
         else:
             raise ArgumentException("That is not a valid bet")
 
+    def clear_bets(self):
+        self.report_status['placed_bets'] = {}

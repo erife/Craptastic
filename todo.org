@@ -1,8 +1,8 @@
-* DONE Set Point
-* DONE Clear table
-* DONE Crap Out
-* DONE Make Point 
 * DONE Place Bet
+* Set Point
+* Clear table
+* Crap Out
+* Make Point 
 * Pay Bet
 * Clear Bet
 * Increase Bet
