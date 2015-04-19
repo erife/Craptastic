@@ -166,7 +166,35 @@ class TableTest(unittest.TestCase):
         
         self.assertEqual(expected_result, result)
 
+    def test_valid_pass_bets(self):
+        expected_result = True
+        
+        table = Table()
+        
+        bet_amount = 1
+        result = table.validate_bet('pass', bet_amount)
+        self.assertEqual(expected_result, result)
 
+        bet_amount = table.status()['bank']
+        result = table.validate_bet('pass', bet_amount)
+        self.assertEqual(expected_result, result)
+
+    def test_invalid_pass_bets(self):
+        expected_result = False
+        
+        table = Table()
+        
+        bet_amount = 0
+        result = table.validate_bet('pass', bet_amount)
+        self.assertEqual(expected_result, result)
+
+        bet_amount = table.status()['bank'] + 1
+        result = table.validate_bet('pass', bet_amount)
+        self.assertEqual(expected_result, result)
+
+        bet_amount = 'nonsense'
+        result = table.validate_bet('pass', bet_amount)
+        self.assertEqual(expected_result, result)
 if __name__ == "__main__":
     unittest.main(verbosity=2)
     
