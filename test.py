@@ -12,7 +12,8 @@ class TableTest(unittest.TestCase):
         }
     def setUp(self):
         self.initial_status = copy(self.INITIAL_STATUS)
-    
+        
+        
     def test_initial_status(self):
         table = Table()
         expected_result = self.initial_status
@@ -179,6 +180,7 @@ class TableTest(unittest.TestCase):
         result = table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
+        
     def test_invalid_pass_bets(self):
         expected_result = False
         
@@ -195,6 +197,61 @@ class TableTest(unittest.TestCase):
         bet_amount = 'nonsense'
         result = table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
+
+    def test_valid_number_bets(self):
+        expected_result = True
+        
+        table = Table()
+        number_bets = {
+            '4' : 5,
+            '5' : 5,
+            '6' : 6,
+            '8' : 6,
+            '9' : 5,
+            '10': 5
+        }
+        
+        for bet in number_bets.keys():
+            bet_amount = number_bets[bet]
+            result = table.validate_bet(bet, bet_amount)
+            self.assertEqual(expected_result, result)
+
+        bet_amount = table.status()['bank']
+        result = table.validate_bet('4', bet_amount)
+        self.assertEqual(expected_result, result)
+
+        
+    def test_invalid_pass_bets(self):
+        expected_result = False
+        
+        table = Table()
+        
+        number_bets = {
+            '4' : 5,
+            '5' : 5,
+            '6' : 6,
+            '8' : 6,
+            '9' : 5,
+            '10': 5
+        }
+        
+        for bet in number_bets.keys():
+            for offset in [-1, 1]:
+                bet_amount = number_bets[bet] + offset
+                result = table.validate_bet(bet, bet_amount)
+                self.assertEqual(expected_result, result)
+
+        bet_amount = table.status()['bank'] + 1
+        result = table.validate_bet('pass', bet_amount)
+        self.assertEqual(expected_result, result)
+
+        bet_amount = 'nonsense'
+        result = table.validate_bet('pass', bet_amount)
+        self.assertEqual(expected_result, result)
+
+        
+        
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
     
