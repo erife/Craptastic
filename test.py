@@ -249,10 +249,21 @@ class TableTest(unittest.TestCase):
         result = table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
-        
-        
+
+    def test_process_result_win_coming_out(self):
+        expected_result = {
+            'winners': ['pass'],
+            'is_on': False,
+            'clear_bets': False
+        }
+
+        table = Table()
+
+        rolls = [[1,6], [2,5], [3,4]]
+        for roll in rolls:
+            result = table.process_roll(roll)
+            self.assertEqual(expected_result, result)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
-    
-    
