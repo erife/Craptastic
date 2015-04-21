@@ -221,7 +221,7 @@ class TableTest(unittest.TestCase):
         self.assertEqual(expected_result, result)
 
         
-    def test_invalid_pass_bets(self):
+    def test_invalid_number_bets(self):
         expected_result = False
         
         table = Table()

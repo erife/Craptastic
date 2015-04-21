@@ -48,3 +48,15 @@ class Table():
             else:
                 win_amount += placed_bet
         return win_amount
+
+    def validate_bet(self, bet, bet_amount):
+        if isinstance(bet_amount, int):
+            if bet_amount > 0 and bet_amount <= self.report_status['bank']:
+                if bet == 'pass':
+                    return True
+                elif bet in ('4', '5', '9', '10') and bet_amount % 5 ==0:
+                    return True
+                elif bet in ('6', '8') and bet_amount % 6 ==0: 
+                    return True
+        return False
+    
