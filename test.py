@@ -220,8 +220,8 @@ class TableTest(unittest.TestCase):
         result = table.validate_bet('4', bet_amount)
         self.assertEqual(expected_result, result)
 
-        
-    def test_invalid_pass_bets(self):
+
+    def test_invalid_number_bets(self):
         expected_result = False
         
         table = Table()
