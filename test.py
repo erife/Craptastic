@@ -35,10 +35,13 @@ class TableTest(unittest.TestCase):
         'boxcars':      [6, 6]
     }
 
+    CRAPS_ROLLS = [
+        'snake_eyes',
+        'ace_deuce'
+    ]
+
     def setUp(self):
         self.initial_status = copy(self.INITIAL_STATUS)
-        
-        
 
 
     def test_process_result_natural_coming_out(self):
@@ -56,10 +59,51 @@ class TableTest(unittest.TestCase):
             dice = self.ROLLS[roll]
             result = table.process_roll(dice)
             self.assertEqual(expected_result, result)
+
+    def test_process_result_craps_coming_out(self):
+        expected_result = {
+            'winners': ['dont_pass'],
+            'is_on': False,
+            'clear_pass_bets': True,
+            'clear_number_bets': False
+        }
+
+        table = Table()
+
+        rolls = ['snake_eyes', 'ace_deuce']
+        for roll in rolls:
+            result = table.process_roll(self.ROLLS[roll])
+            self.assertEqual(expected_result, result)
+
+
+    def test_is_craps(self):
+        self.initial_status['is_on'] = False
+        table = Table(self.initial_status)
+        for roll in self.CRAPS_ROLLS:
+            result = table.is_craps(self.ROLLS[roll])
+            self.assertEqual(True, result)
+
+    def test_is_craps(self):
+        self.initial_status['is_on'] = False
+        table = Table(self.initial_status)
+        table = Table(self.initial_status)
+        for roll in self.ROLLS.keys() - self.CRAPS_ROLLS:
+            result = table.is_craps(self.ROLLS[roll])
+            self.assertEqual(False, result)
+
+    def test_winners(self):
+        self.initial_status['is_on'] = False
+        table = Table(self.initial_status)
+        result = table.get_winners(table.is_craps)
+        expected_result = ['dont_pass']
+
+        self.assertEqual(expected_result, result)
+
+
     def test_initial_status(self):
         table = Table()
         expected_result = self.initial_status
-        
+
         result = table.status()
         self.assertEqual(expected_result, result)
 
