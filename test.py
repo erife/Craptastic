@@ -10,10 +10,52 @@ class TableTest(unittest.TestCase):
             'available_bets': ['pass'],
             'placed_bets': {}
         }
+
+    ROLLS = {
+        'snake_eyes':   [1, 1],
+        'ace_deuce':    [1, 2],
+        'easy_four':    [1, 3],
+        'five':         [1, 4],
+        'five_fever':   [2, 3],
+        'six':          [1, 5],
+        'hard_four':    [2, 2],
+        'easy_six':     [2, 4],
+        'hard_six':     [3, 3],
+        'seven_out_1':  [1, 6],
+        'seven_out_2':  [2, 5],
+        'seven_out_3':  [3, 4],
+        'easy_eight_1': [2, 6],
+        'easy_eight_2': [3, 5],
+        'hard_eight':   [4, 4],
+        'easy_nine_1':  [3, 6],
+        'easy_nine_2':  [4, 5],
+        'easy_ten':     [4, 6],
+        'hard_ten':     [5, 5],
+        'yo_leven':     [5, 6],
+        'boxcars':      [6, 6]
+    }
+
     def setUp(self):
         self.initial_status = copy(self.INITIAL_STATUS)
         
         
+
+
+    def test_process_result_natural_coming_out(self):
+        expected_result = {
+            'winners': ['pass'],
+            'is_on': False,
+            'clear_pass_bets': False,
+            'clear_number_bets': False
+        }
+
+        table = Table()
+
+        rolls = ['seven_out_1', 'seven_out_2', 'seven_out_3', 'yo_leven']
+        for roll in rolls:
+            dice = self.ROLLS[roll]
+            result = table.process_roll(dice)
+            self.assertEqual(expected_result, result)
     def test_initial_status(self):
         table = Table()
         expected_result = self.initial_status
@@ -249,20 +291,6 @@ class TableTest(unittest.TestCase):
         result = table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
-
-    def test_process_result_win_coming_out(self):
-        expected_result = {
-            'winners': ['pass'],
-            'is_on': False,
-            'clear_bets': False
-        }
-
-        table = Table()
-
-        rolls = [[1,6], [2,5], [3,4]]
-        for roll in rolls:
-            result = table.process_roll(roll)
-            self.assertEqual(expected_result, result)
 
 
 if __name__ == "__main__":
