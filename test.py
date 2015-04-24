@@ -77,14 +77,14 @@ class TableTest(unittest.TestCase):
             self.assertEqual(expected_result, result)
 
 
-    def test_is_craps(self):
+    def test_is_craps_valid(self):
         self.initial_status['is_on'] = False
         table = Table(self.initial_status)
         for roll in self.CRAPS_ROLLS:
             result = table.is_craps(self.ROLLS[roll])
             self.assertEqual(True, result)
 
-    def test_is_craps(self):
+    def test_is_craps_invalid(self):
         self.initial_status['is_on'] = False
         table = Table(self.initial_status)
         table = Table(self.initial_status)
