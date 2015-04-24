@@ -37,7 +37,8 @@ class TableTest(unittest.TestCase):
 
     CRAPS_ROLLS = [
         'snake_eyes',
-        'ace_deuce'
+        'ace_deuce',
+        'boxcars'
     ]
 
     def setUp(self):
@@ -70,7 +71,7 @@ class TableTest(unittest.TestCase):
 
         table = Table()
 
-        rolls = ['snake_eyes', 'ace_deuce']
+        rolls = ['snake_eyes', 'ace_deuce', 'boxcars']
         for roll in rolls:
             result = table.process_roll(self.ROLLS[roll])
             self.assertEqual(expected_result, result)
