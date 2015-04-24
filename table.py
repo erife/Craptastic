@@ -8,6 +8,10 @@ class Table():
         'is_on': False
     }
 
+
+
+
+    
     
     def __init__(self, status=DEFAULT_STATUS):
         self.report_status = copy(status)
@@ -59,4 +63,32 @@ class Table():
                 elif bet in ('6', '8') and bet_amount % 6 ==0: 
                     return True
         return False
-    
+
+    def process_roll(self, roll):
+        dice_sum = roll[0]+roll[1]
+        if self.is_craps(roll):
+            return {
+                'winners': ['dont_pass'],
+                'is_on': False,
+                'clear_pass_bets': True,
+                'clear_number_bets': False
+            }
+        
+        if dice_sum in (7, 11):
+            return {
+                'winners': ['pass'],
+                'is_on': False,
+                'clear_pass_bets': False,
+                'clear_number_bets': False
+            }
+        
+            
+    def is_craps(self, roll):
+        dice_sum = roll[0]+roll[1]
+        if not self.report_status['is_on'] and dice_sum in (2,3,12):
+            return True
+        return False
+
+    def get_winners(self, value):
+        return ['dont_pass']
+            

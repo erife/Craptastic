@@ -1,36 +1,16 @@
 
-
 #table {
-    outline: 4px solid black;
-    width: 80%;
-    margin: auto;
-    height: 150px;
-    background: green;
+    margin-top: 50px;
+    outline: 1px solid  black;
+    height: 300px;
+    margin-top: 10px;
 }
 
 
-.numbers {
-    float: left;
-    height: 60%;
-    width: 16.66%;
-    margin: auto;
+#pass {
+    outline: 1px solid green;
     text-align: center;
-    font-size: 50px;
-    outline: 2px solid black;
-    padding-top: 15px;
-    color: yellow;
-}
-
-.numbers:nth-child(5){
-    font-size: 35px;
-}
-
-
-#pass_line {
-    clear: both;
-    height: 20%;
-    font-size: 40px;
-    text-align: center;
-    outline: 2px solid black;
-    color: yellow;
+    width: 300px;
+    -moz-transform: rotate(90deg);
+    padding-left: 100px;
 }
