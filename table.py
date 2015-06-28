@@ -8,9 +8,9 @@ class Table():
         'is_on': False
     }
 
-    def __init__(self, status=DEFAULT_STATUS):
+    def __init__(self, dice=[1,1], status=DEFAULT_STATUS):
         self.report_status = copy(status)
-
+        self.dice = dice
 
     def status(self):
         return self.report_status
@@ -60,6 +60,9 @@ class Table():
                 elif bet in ('6', '8') and bet_amount % 6 ==0:
                     return True
         return False
+
+    def roll_dice(self):
+        return self.dice.pop(0)
 
     def process_roll(self, roll):
         dice_sum = roll[0]+roll[1]

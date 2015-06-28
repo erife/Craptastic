@@ -41,9 +41,11 @@ class TableTest(unittest.TestCase):
         'boxcars'
     ]
 
+
+
     def setUp(self):
         self.initial_status = copy(self.INITIAL_STATUS)
-
+        self.table = Table()
 
     def test_process_roll_natural_coming_out(self):
         expected_result = {
@@ -53,12 +55,11 @@ class TableTest(unittest.TestCase):
             'clear_number_bets': False
         }
 
-        table = Table()
 
         rolls = ['seven_out_1', 'seven_out_2', 'seven_out_3', 'yo_leven']
         for roll in rolls:
             dice = self.ROLLS[roll]
-            result = table.process_roll(dice)
+            result = self.table.process_roll(dice)
             self.assertEqual(expected_result, result)
 
     def test_process_roll_craps_coming_out(self):
@@ -69,39 +70,39 @@ class TableTest(unittest.TestCase):
             'clear_number_bets': False
         }
 
-        table = Table()
+
 
         rolls = ['snake_eyes', 'ace_deuce', 'boxcars']
         for roll in rolls:
-            result = table.process_roll(self.ROLLS[roll])
+            result = self.table.process_roll(self.ROLLS[roll])
             self.assertEqual(expected_result, result)
 
 
     def test_is_craps_valid(self):
-        table = Table(self.initial_status)
+        table = Table(status = self.initial_status)
         for roll in self.CRAPS_ROLLS:
             result = table.is_craps(self.ROLLS[roll])
             self.assertEqual(True, result)
 
     def test_is_craps_invalid(self):
-        table = Table(self.initial_status)
+        table = Table(status = self.initial_status)
         for roll in self.ROLLS.keys() - self.CRAPS_ROLLS:
             result = table.is_craps(self.ROLLS[roll])
             self.assertEqual(False, result)
 
     def test_winners(self):
-        table = Table(self.initial_status)
-        result = table.get_winners(table.is_craps)
+        table = Table(status = self.initial_status)
+        result = table.get_winners(self.table.is_craps)
         expected_result = ['dont_pass']
 
         self.assertEqual(expected_result, result)
 
 
     def test_initial_status(self):
-        table = Table()
+
         expected_result = self.initial_status
 
-        result = table.status()
+        result = self.table.status()
         self.assertEqual(expected_result, result)
 
 
@@ -113,7 +114,7 @@ class TableTest(unittest.TestCase):
             'placed_bets': {'6': 1}
         }
 
-        table = Table(status)
+        table = Table(status = status)
         expected_result = status
 
         result = table.status()
@@ -121,19 +122,17 @@ class TableTest(unittest.TestCase):
 
 
     def test_set_status_on(self):
-        table = Table()
-
         expected_result = self.initial_status
         expected_result['is_on'] = True
-        table.set_on()
+        self.table.set_on()
 
-        result = table.status()
+        result = self.table.status()
         self.assertEqual(expected_result, result)
 
     def test_set_status_off(self):
         initial_status = self.initial_status
         initial_status['is_on'] = True
-        table = Table(initial_status)
+        table = Table(status = initial_status)
 
         expected_result = self.INITIAL_STATUS
         table.set_off()
@@ -142,50 +141,48 @@ class TableTest(unittest.TestCase):
         self.assertEqual(expected_result, result)
 
     def test_increment_bank(self):
-        table = Table()
+
 
         expected_result = self.initial_status
         expected_result['bank'] = 101
 
-        table.increment_bank(1)
+        self.table.increment_bank(1)
 
-        result = table.status()
+        result = self.table.status()
         self.assertEqual(expected_result, result)
 
     def test_decrement_bank(self):
-        table = Table()
 
         expected_result = self.initial_status
         expected_result['bank'] = 99
 
-        table.decrement_bank(1)
+        self.table.decrement_bank(1)
 
-        result = table.status()
+        result = self.table.status()
         self.assertEqual(expected_result, result)
 
 
     def test_place_bet(self):
-        table = Table()
 
         expected_result = self.initial_status
         expected_result['placed_bets'] = {'pass': 1}
 
-        table.place_bet('pass', 1)
+        self.table.place_bet('pass', 1)
 
-        result = table.status()
+        result = self.table.status()
         self.assertEqual(expected_result, result)
 
-        table.place_bet('pass', 1)
+        self.table.place_bet('pass', 1)
         expected_result['placed_bets'] = {'pass': 2}
         self.assertEqual(expected_result, result)
 
         for bet in ['-3', '1', '0', '13']:
             with self.assertRaisesRegex(ArgumentException, "That is not a valid bet"):
-                table.place_bet(bet, 1)
+                self.table.place_bet(bet, 1)
 
         for bet in ['4', '5', '6', '8', '9', '10']:
             with self.assertRaisesRegex(ArgumentException, "That is not a valid bet when the table is off"):
-                table.place_bet(bet, 1)
+                self.table.place_bet(bet, 1)
 
 
     def test_clear_bets(self):
@@ -193,7 +190,7 @@ class TableTest(unittest.TestCase):
         expected_result = self.INITIAL_STATUS
 
         self.initial_status['placed_bets'] = {'pass': 1}
-        table = Table(self.initial_status)
+        table = Table(status = self.initial_status)
 
         table.clear_bets()
 
@@ -204,7 +201,7 @@ class TableTest(unittest.TestCase):
         bet_amount = 1
         initial_status = copy(self.INITIAL_STATUS)
         initial_status['placed_bets'] = {'pass': bet_amount}
-        table = Table(initial_status)
+        table = Table(status = initial_status)
 
 
         winning_bets = ['pass']
@@ -219,7 +216,7 @@ class TableTest(unittest.TestCase):
         bet_amount = 6
         initial_status = copy(self.INITIAL_STATUS)
         initial_status['placed_bets'] = {'pass': bet_amount, '6': bet_amount}
-        table = Table(initial_status)
+        table = Table(status = initial_status)
 
 
         winning_bets = ['pass', '6']
@@ -236,7 +233,7 @@ class TableTest(unittest.TestCase):
         bet_amount = 12
         initial_status = copy(self.INITIAL_STATUS)
         initial_status['placed_bets'] = {'pass': bet_amount, '6': bet_amount}
-        table = Table(initial_status)
+        table = Table(status = initial_status)
 
 
         winning_bets = ['pass', '6']
@@ -252,38 +249,35 @@ class TableTest(unittest.TestCase):
     def test_valid_pass_bets(self):
         expected_result = True
 
-        table = Table()
 
         bet_amount = 1
-        result = table.validate_bet('pass', bet_amount)
+        result = self.table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
-        bet_amount = table.status()['bank']
-        result = table.validate_bet('pass', bet_amount)
+        bet_amount = self.table.status()['bank']
+        result = self.table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
 
     def test_invalid_pass_bets(self):
         expected_result = False
 
-        table = Table()
 
         bet_amount = 0
-        result = table.validate_bet('pass', bet_amount)
+        result = self.table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
-        bet_amount = table.status()['bank'] + 1
-        result = table.validate_bet('pass', bet_amount)
+        bet_amount = self.table.status()['bank'] + 1
+        result = self.table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
         bet_amount = 'nonsense'
-        result = table.validate_bet('pass', bet_amount)
+        result = self.table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
     def test_valid_number_bets(self):
         expected_result = True
 
-        table = Table()
         number_bets = {
             '4' : 5,
             '5' : 5,
@@ -295,17 +289,16 @@ class TableTest(unittest.TestCase):
 
         for bet in number_bets.keys():
             bet_amount = number_bets[bet]
-            result = table.validate_bet(bet, bet_amount)
+            result = self.table.validate_bet(bet, bet_amount)
             self.assertEqual(expected_result, result)
 
-        bet_amount = table.status()['bank']
-        result = table.validate_bet('4', bet_amount)
+        bet_amount = self.table.status()['bank']
+        result = self.table.validate_bet('4', bet_amount)
         self.assertEqual(expected_result, result)
 
     def test_invalid_number_bets(self):
         expected_result = False
 
-        table = Table()
 
         number_bets = {
             '4' : 5,
@@ -319,19 +312,18 @@ class TableTest(unittest.TestCase):
         for bet in number_bets.keys():
             for offset in [-1, 1]:
                 bet_amount = number_bets[bet] + offset
-                result = table.validate_bet(bet, bet_amount)
+                result = self.table.validate_bet(bet, bet_amount)
                 self.assertEqual(expected_result, result)
 
-        bet_amount = table.status()['bank'] + 1
-        result = table.validate_bet('pass', bet_amount)
+        bet_amount = self.table.status()['bank'] + 1
+        result = self.table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
         bet_amount = 'nonsense'
-        result = table.validate_bet('pass', bet_amount)
+        result = self.table.validate_bet('pass', bet_amount)
         self.assertEqual(expected_result, result)
 
     def test_handle_bet_valid(self):
-        table = Table()
         expected_status = {
             'bank': 99,
             'is_on': False,
@@ -339,12 +331,11 @@ class TableTest(unittest.TestCase):
             'placed_bets': {'pass': 1}
         }
 
-        table.handle_bet('pass', 1)
+        self.table.handle_bet('pass', 1)
 
-        self.assertEqual(expected_status, table.status())
+        self.assertEqual(expected_status, self.table.status())
 
     def test_handle_bet_valid_double(self):
-        table = Table()
         expected_status = {
             'bank': 98,
             'is_on': False,
@@ -352,13 +343,13 @@ class TableTest(unittest.TestCase):
             'placed_bets': {'pass': 2}
         }
 
-        table.handle_bet('pass', 1)
-        table.handle_bet('pass', 1)
+        self.table.handle_bet('pass', 1)
+        self.table.handle_bet('pass', 1)
 
-        self.assertEqual(expected_status, table.status())
+        self.assertEqual(expected_status, self.table.status())
 
     def test_handle_bet_invalid(self):
-        table = Table()
+
         expected_status = {
             'bank': 100,
             'is_on': False,
@@ -366,10 +357,18 @@ class TableTest(unittest.TestCase):
             'placed_bets': {}
         }
 
-        table.handle_bet('pass', 101)
+        self.table.handle_bet('pass', 101)
 
-        self.assertEqual(expected_status, table.status())
+        self.assertEqual(expected_status, self.table.status())
 
+    def test_shoot_dice(self):
+        rolls = ['five', 'seven_out_1', 'easy_ten']
+        dice = [self.ROLLS[roll] for roll in rolls]
+        table = Table(dice)
+
+        self.assertEqual(self.ROLLS['five'], table.roll_dice())
+        self.assertEqual(self.ROLLS['seven_out_1'], table.roll_dice())
+        self.assertEqual(self.ROLLS['easy_ten'], table.roll_dice())
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
