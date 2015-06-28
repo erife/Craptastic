@@ -375,5 +375,16 @@ class TableTest(unittest.TestCase):
         self.assertEqual(self.ROLLS['seven_out_1'], table.roll_dice())
         self.assertEqual(self.ROLLS['easy_ten'], table.roll_dice())
 
+    def test_valid_for_shoot_invalid(self):
+        self.assertFalse(self.table.valid_for_shoot())
+
+
+    def test_valid_for_shoot_valid(self):
+        initial_status = self.initial_status
+        initial_status['placed_bets'] = {'pass': 1}
+        table = Table(status = initial_status)
+        self.assertTrue(table.valid_for_shoot())
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

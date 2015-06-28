@@ -68,7 +68,7 @@ class Table():
         dice_sum = roll[0]+roll[1]
         if self.is_craps(roll):
             return {
-                'winners': ['dont_pass'],
+                'winners': self.get_winners(roll),
                 'is_on': False,
                 'clear_pass_bets': True,
                 'clear_number_bets': False
@@ -76,7 +76,7 @@ class Table():
 
         if dice_sum in (7, 11):
             return {
-                'winners': ['pass'],
+                'winners': self.get_winners(roll),
                 'is_on': False,
                 'clear_pass_bets': False,
                 'clear_number_bets': False
@@ -97,3 +97,6 @@ class Table():
         if not self.validate_bet(bet, amount): return
         self.place_bet(bet, amount)
         self.decrement_bank(amount)
+
+    def valid_for_shoot(self):
+        return 'pass' in self.report_status['placed_bets'].keys()
