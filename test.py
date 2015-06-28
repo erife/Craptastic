@@ -7,7 +7,7 @@ class TableTest(unittest.TestCase):
     INITIAL_STATUS = {
             'bank': 100,
             'is_on': False,
-            'available_bets': ['pass'],
+            'available_bets': ['pass', 'dont_pass'],
             'placed_bets': {}
         }
 
@@ -177,6 +177,7 @@ class TableTest(unittest.TestCase):
 
         table.place_bet('pass', 1)
         expected_result['placed_bets'] = {'pass': 2}
+        self.assertEqual(expected_result, result)
 
         for bet in ['-3', '1', '0', '13']:
             with self.assertRaisesRegex(ArgumentException, "That is not a valid bet"):
@@ -338,9 +339,36 @@ class TableTest(unittest.TestCase):
             'placed_bets': {'pass': 1}
         }
 
-        status = table.handle_bet()
+        table.handle_bet('pass', 1)
 
-        self.assertEqual(expected_status, status)
+        self.assertEqual(expected_status, table.status())
+
+    def test_handle_bet_valid_double(self):
+        table = Table()
+        expected_status = {
+            'bank': 98,
+            'is_on': False,
+            'available_bets': ['pass', 'dont_pass'],
+            'placed_bets': {'pass': 2}
+        }
+
+        table.handle_bet('pass', 1)
+        table.handle_bet('pass', 1)
+
+        self.assertEqual(expected_status, table.status())
+
+    def test_handle_bet_invalid(self):
+        table = Table()
+        expected_status = {
+            'bank': 100,
+            'is_on': False,
+            'available_bets': ['pass', 'dont_pass'],
+            'placed_bets': {}
+        }
+
+        table.handle_bet('pass', 101)
+
+        self.assertEqual(expected_status, table.status())
 
 
 if __name__ == "__main__":

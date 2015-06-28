@@ -3,7 +3,7 @@ class ArgumentException(Exception): pass
 class Table():
     DEFAULT_STATUS = {
         'bank': 100,
-        'available_bets': ['pass'],
+        'available_bets': ['pass', 'dont_pass'],
         'placed_bets': {},
         'is_on': False
     }
@@ -29,7 +29,9 @@ class Table():
 
     def place_bet(self, bet, amount):
         if bet == 'pass':
-            self.report_status['placed_bets'] = {bet: amount}
+            placed_bets = self.report_status['placed_bets']
+            existing_amount = ('pass' in placed_bets.keys() and placed_bets['pass']) or 0
+            self.report_status['placed_bets'] = {bet: amount + existing_amount}
         elif bet in ['4', '5', '6', '8', '9', '10']:
             raise ArgumentException("That is not a valid bet when the table is off")
         else:
@@ -87,10 +89,7 @@ class Table():
     def get_winners(self, value):
         return ['dont_pass']
 
-    def handle_bet(self):
-        return {
-            'bank': 99,
-            'is_on': False,
-            'available_bets': ['pass', 'dont_pass'],
-            'placed_bets': {'pass': 1}
-        }
+    def handle_bet(self, bet, amount):
+        if not self.validate_bet(bet, amount): return
+        self.place_bet(bet, amount)
+        self.decrement_bank(amount)
