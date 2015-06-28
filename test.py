@@ -90,11 +90,16 @@ class TableTest(unittest.TestCase):
             result = table.is_craps(self.ROLLS[roll])
             self.assertEqual(False, result)
 
-    def test_winners(self):
+    def test_winners_dont_pass(self):
         table = Table(status = self.initial_status)
-        result = table.get_winners(self.table.is_craps)
+        result = table.get_winners(self.ROLLS[self.CRAPS_ROLLS[0]])
         expected_result = ['dont_pass']
+        self.assertEqual(expected_result, result)
 
+    def test_winners_pass(self):
+        table = Table(status = self.initial_status)
+        result = table.get_winners(self.ROLLS['seven_out_1'])
+        expected_result = ['pass']
         self.assertEqual(expected_result, result)
 
 

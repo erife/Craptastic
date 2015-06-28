@@ -90,7 +90,8 @@ class Table():
         return False
 
     def get_winners(self, value):
-        return ['dont_pass']
+        if self.is_craps(value): return ['dont_pass']
+        return ['pass']
 
     def handle_bet(self, bet, amount):
         if not self.validate_bet(bet, amount): return
